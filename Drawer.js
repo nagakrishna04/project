@@ -69,7 +69,8 @@ const AppBar = styled(MuiAppBar, {
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
-    backgroundColor:'black',
+    backgroundColor:'#404453',
+ 
    
   }),
   ...(open && {
@@ -118,7 +119,7 @@ export default function MiniDrawer() {
     <Box sx={{ display: 'flex',  }}>
       <CssBaseline />
       <AppBar position="fixed" open={open} sx ={{
-        backgroundColor:'black',
+        backgroundColor:'#404453',
         height:55,
 
         
@@ -140,13 +141,90 @@ export default function MiniDrawer() {
           >
             <MenuIcon />
           </IconButton>
+
+           
+        <Button  className='btn'  sx = {{fontFamily:'Lato', color:'white', width:150, height:57,bottom:5,
         
+        fontStyle: 'normal',
+        fontWeight: 400,
+        fontSize: 14,
+        
+        borderRadius:0,
+        textTransform:'unset',
+        '&:hover': {
+          background: "#ffffff",
+          color:' #141413DE',
           
+        }
         
+        
+        }}>
+           Manage Partner
+          </Button>
+        
+          <Button  className='btn' sx = {{fontFamily:'Lato',
+           color:'white',
+           width:170,
+            height:57,
+            fontWeight:400,
+            bottom:5,
+            textTransform:'unset',
+            borderRadius:0,
+          '&:hover': {
+            background: "#ffffff",
+            color:' #141413DE',
+          }
+        }}>
+           Manage Companies
+          </Button>
+          <div>
+          <Button  className='btn' sx = {{fontFamily:'Lato',color:'white', width:150, height:55, 
+        bottom:5,
+        weight:400,
+        borderRadius:0,
+        textTransform:'unset',
+        '&:hover': {
+          background: "#ffffff",
+          color:' #141413DE',
+        }
+        }}>
+           Manage Partcipants
+          </Button>
+       
+
+          </div>
+         
+          <div>
+          <p>
+          
+          <IconButton
+            size="large"
+            aria-label="display more actions"
+            edge='end'
+            color="inherit"
+            
+            sx = {{position:'absolute',right:31, bottom:10,paddingRight:3}}
+          >
+            <SearchIcon />
+            
+          </IconButton>
+          <IconButton
+            size="large"
+            aria-label="display more actions"
+            
+            color="inherit"
+            edge='end'
+            sx = {{position:'absolute',right:1, bottom:10,paddingRight:2}}
+          >
+           
+            <LocalPrintshopOutlinedIcon />
+          </IconButton>
+        </p>
+          </div>
         </Toolbar>
        
       </AppBar>
-      <Drawer variant="permanent" open={open} sx={{height:50,}}>
+      <Drawer variant="permanent" open={open} sx={{height:500,}}>
         <DrawerHeader>
         <IconButton onClick={handleDrawerClose} sx = {{color:'#ffffff',}}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
@@ -154,7 +232,7 @@ export default function MiniDrawer() {
         </DrawerHeader>
         <Divider />
         <List >
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+          {['Dashboard', 'Onboarding', 'Refernce Data', 'Services','Relationship View','Trade Lifecycle','Settlement','Transactions','User Configuration',].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={{
@@ -179,30 +257,6 @@ export default function MiniDrawer() {
             </ListItem>
           ))}
         
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  color:'#ffffff',
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
-                    color:'#ffffff'
-                  }}
-                >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
         </List>
 
 
