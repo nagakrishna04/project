@@ -1,0 +1,313 @@
+import React,{useState, useEffect} from 'react'
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+import { pink, grey } from '@mui/material/colors';
+import AddIcon from '@mui/icons-material/Add';
+import { Container, Grid, Link, Switch } from '@mui/material';
+import { Controller, useForm } from "react-hook-form";
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import { styled } from '@mui/material/styles';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import { color } from '@mui/system';
+import { InputLabel, MenuItem } from '@mui/material';
+import {Select} from '@mui/material'
+import PartnerPopupContain from '../../pages/client-onboarding/partner/PartnerPopupContain';
+import CreatePartnerTab from '../../pages/client-onboarding/partner/CreatePartnerTab';
+import SetupPartnerTab from '../../pages/client-onboarding/partner/SetupPartnerTab';
+import useAxios from "../../axios/api"
+import { StayPrimaryLandscapeRounded } from '@mui/icons-material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+
+import { fontFamily , fontWeight, height, lineHeight} from '@mui/system';
+
+
+/* import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
+import { useDemoData } from '@mui/x-data-grid-generator'; */
+
+/* function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport />
+    </GridToolbarContainer>
+  );
+} */
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 800,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  maxHeight: '600px',
+  overflowY: 'scroll',
+  p: 4,
+};
+
+const Android12Switch = styled(Switch)(({ theme }) => ({
+  padding: 8,
+  '& .MuiSwitch-track': {
+    borderRadius: 22 / 2,
+    '&:before, &:after': {
+      content: '""',
+      position: 'absolute',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      width: 16,
+      height: 16,
+    },
+    '&:before': {
+      backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
+        theme.palette.getContrastText(theme.palette.primary.main),
+      )}" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>')`,
+      left: 12,
+    },
+    '&:after': {
+      backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
+        theme.palette.getContrastText(theme.palette.primary.main),
+      )}" d="M19,13H5V11H19V13Z" /></svg>')`,
+      right: 12,
+    },
+  },
+  '& .MuiSwitch-thumb': {
+    boxShadow: 'none',
+    width: 16,
+    height: 16,
+    margin: 2,
+  },
+}));
+
+
+
+export  function CustomizedSwitches() {
+  return (
+    <FormGroup>
+     
+      <FormControlLabel
+        control={<Android12Switch defaultChecked />}
+        label="Android 12"
+      />
+     
+     
+    </FormGroup>
+  );
+}
+
+const MyComponent = () => (
+  <div>    
+    {/*<Select className='dropdown' defaultValue={"default"} >
+      <MenuItem value={"default"}>Action</MenuItem>
+      <MenuItem value='edit' id = 'edit'>Edit</MenuItem>
+      <MenuItem value='delete' id = 'delete'>Delete</MenuItem>
+    </Select>*/}
+    <DeleteIcon/>   
+    </div>  
+  )
+  
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.white,
+      color: theme.palette.common.black,
+      fontWeight : 600,
+      fontFamily : 'Lato',
+      fontSize : 14,
+      paddingLeft : 28,
+      paddingTop: 12,
+      paddingBottom : 12,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+      fontWeight : 400,
+      fontFamily : 'Lato',
+      width : 114,
+      height : 22,
+      paddingLeft : 28,
+      paddingTop:5,
+      paddingBottom : 5,
+
+    },    
+    
+  }));
+  
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+      height :22,
+    },
+  
+    '&:last-child td, &:last-child th': {
+      border: 0,
+     
+    },
+  
+  }));
+  
+  const StyledTab = styled(Tab)(({ theme }) => ({
+    "&.Mui-selected": {
+      backgroundColor: "#ffffff",
+      color: "#000000"
+    },
+    "&.MuiTab-root": {
+      textTransform: "unset",
+    },
+    "&:hover": {
+      backgroundColor: "#ffffff",
+      color: "#000000",
+      animation: "fadeInAnimation ease 1s",
+      animationIterationCount: "1",
+      animationFillMode: "forwards"
+    }
+  }));
+  
+  
+  
+ function TopMenu() {
+  const [value, setValue] = useState('1');
+  const [isAddPartner, setisAddPartner] = useState(false);
+  const [partner, setPartner] = useState([]);
+
+  const { handleSubmit, reset, control } = useForm();
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+  const handleClickPartner= (event) => {
+    event.preventDefault();
+    setisAddPartner(true);
+  };
+ const tabStyle = {
+    color: "#FFFFFF"
+ }
+ const [open, setOpen] = React.useState(false);
+ const handleOpen = () => setOpen(true);
+ const handleClose = () => setOpen(false);
+ /* const { data, loading } = useDemoData({
+  dataSet: 'Commodity',
+  rowLength: 4,
+  maxColumns: 6,
+}); */
+let api = useAxios();
+let getPartnerList = async() =>{
+  let response = await api.get('/Partner');   
+  if(response.status === 200){
+     setPartner(response.data.result.reverse());     
+  }        
+}
+
+useEffect(()=>{
+  getPartnerList();
+},[])
+
+
+  return (
+    <>
+    <Grid item style={{marginLeft:'-50px', marginTop:'-10px'}}>
+    <Box sx={{ width: '100%', typography: 'body1' }}>
+      <TabContext value={value}>
+        <Box sx={{backgroundColor: "#404453", textColor: "#FFFFFF"}}>
+          <TabList onChange={handleChange} indicatorColor="transparent" aria-label="Manage Tab" sx={{ color: pink[500] }}  >
+            <StyledTab label="Manage Partners" value="1" sx={{ color: "#FFFFFF" }}/>
+            {/* <StyledTab label="Partner Info" value="2" sx={{ color: "#FFFFFF" }}/> */}
+            <StyledTab label="Manage Companies" value="4" sx={{ color: "#FFFFFF" }} />
+            <StyledTab label="Manage participants" value="3" sx={{ color: "#FFFFFF" }}/>
+          </TabList>
+        </Box>
+        <TabPanel value="1">
+      {!isAddPartner?<>
+      <h4> List of partners</h4>
+      <Button variant="outlined" style={{float:"right",marginBottom:"20px", padding:"10px 15px"}} onClick={handleClickPartner}><AddIcon/> Partner</Button>
+      <br/>
+       {/*  <div style={{ height: 300, width: '100%' }}>
+      <DataGrid
+        {...data}
+        loading={loading}
+        components={{
+          Toolbar: CustomToolbar,
+        }}
+      />      
+    </div> */}
+    <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 650 , backgroundColor:'white' }} aria-label="customized table">
+        <TableHead>
+          <TableRow sx={{fontFamily :'Lato'}}>
+            <StyledTableCell align='left'>Partner code </StyledTableCell>
+            <StyledTableCell align='left'>Partner Name</StyledTableCell>
+            <StyledTableCell align='center' >Surname</StyledTableCell>
+            <StyledTableCell align='center'>Legal Name</StyledTableCell>
+            <StyledTableCell align='center'>Email </StyledTableCell>
+            <StyledTableCell align='left'>Country code</StyledTableCell>
+            <StyledTableCell align='left'>Contact Number</StyledTableCell>
+            {/* <StyledTableCell  align='left'>Status</StyledTableCell> */}
+            <StyledTableCell align='center' >Action</StyledTableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {partner.map((row) => (
+            <StyledTableRow key={row.name}>
+              <StyledTableCell component="th" scope="row" align = 'left'>
+                {row.PartnerCode}
+              </StyledTableCell>
+              <StyledTableCell align="left">{row.PartnerName}</StyledTableCell>
+              <StyledTableCell align="center" >{row.AdminSurName}</StyledTableCell>
+              <StyledTableCell align="center">{row.AdminName}</StyledTableCell>
+              <StyledTableCell align="center">{row.AdminEmailAddress}</StyledTableCell>
+              <StyledTableCell align="center">{row.AdminContactCountryCode}</StyledTableCell>
+              <StyledTableCell align="left" >{row.AdminContactNumber}</StyledTableCell>
+              {/* <StyledTableCell >{row.IsActive ? <span style={{color:'green'}}>Active</span> : <span style={{color:'red'}}>Inactive</span> }</StyledTableCell> */}
+              <StyledTableCell>
+<Container>
+  <Box display = 'flex' flexDirection = 'row'>
+    <Box order = {1} p ={1} flexGrow ={1}>
+      <MyComponent/>
+    </Box>
+    <Box order = {2} flexGrow ={2}>
+      <Android12Switch/>
+    </Box>
+  </Box>
+</Container>
+              </StyledTableCell>
+          
+            </StyledTableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+    </>: <CreatePartnerTab/> }
+        </TabPanel>
+        <TabPanel value="2"><SetupPartnerTab/></TabPanel>
+        <TabPanel value="3">Manage participants</TabPanel>
+        <TabPanel value="4">Manage companies</TabPanel>
+      </TabContext>
+    </Box>
+    </Grid>
+    {/* <Modal
+    open={open}
+    onClose={handleClose}
+    aria-labelledby="modal-modal-title"
+    aria-describedby="modal-modal-description"
+  >
+    <Box sx={style}>     
+      <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+      <PartnerPopupContain/>
+      </Typography>
+    </Box>
+  </Modal> */}
+  </>
+  );
+}
+
+
+export default TopMenu
