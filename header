@@ -1,0 +1,101 @@
+import React, { useContext, useEffect, useState } from 'react'
+import "./Header.css";
+import logo from "../../../assets/images/logo.png";
+import avatar from "../../../assets/images/img_avatar2.png"
+import Dropdown from 'react-bootstrap/Dropdown';
+import AuthContext from "../../../context/AuthContext";
+import {useMsal } from "@azure/msal-react";
+import Container from '@mui/material/Container';
+import { red } from '@mui/material/colors';
+import Badge from '@mui/material/Badge';
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+const Header = ({role,getRole}) => {
+  let {logoutUser,user} = useContext(AuthContext);
+  const { instance, accounts } = useMsal();
+  const[currentRole, setCurrentRole] = useState("Platform Admin")
+  const[currentRoleList, setCurrentRoleList] = useState(role)
+
+  const fullname = accounts[0]?.idTokenClaims["given_name"]?`${accounts[0]?.idTokenClaims["given_name"]} ${accounts[0]?.idTokenClaims["family_name"]}`:accounts[0]?.idTokenClaims["name"];
+  //const name = accounts[0]?.idTokenClaims["name"];
+  getRole(currentRole);
+
+  useEffect(()=>{
+    getCurrentRoleList(currentRole);
+  },[role]);
+
+  const getCurrentRoleList =(curRole)=>{
+  const updateList = role.filter((cur)=>{
+    return cur.roleName !== curRole
+  });
+  //console.log(updateList)
+  setCurrentRoleList(updateList)
+}
+  
+  const handleSetRole = (e)=>{
+    e.preventDefault();
+     setCurrentRole(e.target.name);
+     getCurrentRoleList(e.target.name);
+     //console.log(currentRoleList);
+  }
+  return (    
+         <Container maxWidth="1440px" sx={{padding:'0 !important',}}>
+          <header className='header'> 
+          <div className='row ' style={{width:'80vw', margin:'0 auto'}}>
+            <div className='col-2'>
+              <img src={logo} alt="logo" />
+              </div>
+              <div className='col-6'>
+              <Dropdown className='mt-2'>
+                <Dropdown.Toggle variant="" id="dropdown-basic">
+                <span>Set Context</span>
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item href="#">Context 1</Dropdown.Item>
+                  <Dropdown.Item href="#">Context 2</Dropdown.Item>
+                  <Dropdown.Item href="#">Context 3</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>     
+           
+            <div className='col-2 text-start pt-3 pr-0' >
+            
+            <i class="bi bi-search" style={{fontSize:'18px', marginRight:'38px', cursor:'pointer'}}></i>
+           
+            <i class="bi bi-card-list" style={{fontSize:'20px', marginRight:'38px',cursor:'pointer'}}></i>
+          
+            <Badge badgeContent={2} color = 'secondary'>
+            <i className="bi bi-bell" style={{fontSize: "20px" ,cursor:'pointer'}}></i> 
+            </Badge>
+          </div>
+          
+
+          <div className='col-2 text-end'>
+          
+        <Dropdown>
+          <Dropdown.Toggle variant="" id="dropdown-basic" className='profile-menu text-end'>
+          <div className="w-75" >{currentRole} <br/> <span className="text-muted">({fullname})</span>
+          </div> 
+           <div className='w-25 avatar'><i className="bi bi-person-circle " ></i> </div>
+          </Dropdown.Toggle>
+          <Dropdown.Menu >            
+                {
+                        currentRoleList.map((curRole,index)=>{
+                            return(                                
+                                <Dropdown.Item href="#" name={curRole.roleName} onClick={handleSetRole} style = {{width:'100%', height:38}} ><i className="bi bi-arrow-left-right"></i> &nbsp;  Switch user</Dropdown.Item>
+                            )
+                        })
+                    }
+                    <Dropdown.Item href="#" onClick={logoutUser}><i className="bi bi-person-lines-fill" style = {{width:171, height:38}}></i>  &nbsp; Personal Details</Dropdown.Item>
+                    <Dropdown.Item href="#" onClick={logoutUser}><i className="bi bi-person-lines-fill" style = {{width:171, height:38}}></i>  &nbsp; Prefernces</Dropdown.Item>
+            <Dropdown.Item href="#" onClick={logoutUser}><i className="bi bi-power" style = {{width:171, height:38}}></i> &nbsp;  Sign Out</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+      </div>
+      </div>
+      </header>
+   </Container>
+   
+  )
+}
+
+export default Header
