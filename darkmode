@@ -1,0 +1,23 @@
+ changeTheme={changeTheme} currentTheme ={theme}
+ const[theme, setTheme] = useState('dark');
+  const changeTheme = () =>{
+    theme === 'dark'?setTheme('light'):setTheme('dark')
+  }
+
+
+
+
+
+</Button>
+       
+          <button onClick={changeTheme} className="color-mode">
+          
+          {theme === "dark" ? (
+                  <Brightness4Icon className="sun" />
+                ) : (
+                  <Brightness7Icon className="moon" />
+                )}
+            
+          </button>
+
+
